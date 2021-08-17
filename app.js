@@ -1,15 +1,20 @@
 'use strict'
 
-const mongoose = require("mongoose")
-const app = require('./app')
+//Variables Globales
+const express = require("express");
+const app = express();
 
-mongoose.Promise = global.Promise;
+const bodyParser = require("body-parser")
+const cors = require("cors")
+
+//MIDDLEWARES
+app.use(bodyParser.urlencoded({ extended: false}))
+app.use(bodyParser.json())
 
 
-mongoose.connect( URL, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false }).then(() => {
-    console.log('Successful database connection')
+//CABECERAS
 
-    app.listen(3000, function () {
-        console.log('Server running on port 3000')
-    })
-}).catch(err => console.log(err))
+app.use(cors());
+
+//Exportar
+module.exports = app;
