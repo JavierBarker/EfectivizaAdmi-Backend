@@ -4,9 +4,9 @@ const mongoose = require("mongoose")
 const app = require('./app')
 
 mongoose.Promise = global.Promise;
+const URL = 'mongodb://localhost:27017/GoldenLionDB';
 
-
-mongoose.connect('mongodb://localhost:27017/goldenLionDB', {useNewUrlParser: true, useUnifiedTopology: true}).then(()=>{
+mongoose.connect( URL, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false}).then(()=>{
     console.log('se encuentra conectado a la base de datos');
 
     app.listen(3000, function (){
