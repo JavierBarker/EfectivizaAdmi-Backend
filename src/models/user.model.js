@@ -5,11 +5,11 @@ var Schema = mongoose.Schema;
 
 var UserSchema = Schema({
 
-    name: String,
-    lastname: String,
-    username: String,
-    password: String,
-    rol: String
+    name: {type: String, required: true},
+    lastname: {type: String, required: true},
+    username: {type: String, required: true},
+    password: {type: String, required: true},
+    rol: {type: String, required: true}
 
 })
 
