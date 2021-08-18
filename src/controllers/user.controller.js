@@ -38,18 +38,20 @@ function createAdmin(){
 
 function login(req, res) {
     var params = req.body;
+
     User.findOne({ username: params.username}, (err, userFound)=>{
         if (err) return res.status(500).send({err,message: 'Error en la peticion'});
 
         if(userFound){
             bcrypt.compare(params.password, userFound.password, (err, passCorrect)=>{
                 if (passCorrect) { 
-                    if (params.getToken === 'true') {
+                    if (params.getToken === true) {
                         return res.status(200).send({
-                            token: jwt.createToken(userFound)
+                            token: jwt.createToken(userFound),
+                            userFound: userFound
                         })
                     }else{
-                        usuarioEncontrado.password = undefined;
+                        userFound.password = undefined;
                         return res.status(200).send({userFound});
                     }
                 }else{
@@ -63,8 +65,13 @@ function login(req, res) {
     })
 }
 
+function presionar(req,res) {
+    console.log("presionar");
+}
+
 
 module.exports = {
     createAdmin,
-    login
+    login,
+    presionar
 }
