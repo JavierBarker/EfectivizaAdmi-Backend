@@ -1,7 +1,8 @@
 'use strict'
 
 const User = require('../models/user.model');
-const bcrypt = require("bcrypt-nodejs")
+const bcrypt = require("bcrypt-nodejs");
+const jwt = require('../services/jwt');
 
 function createAdmin(){
     var modelUser = new User(); 
@@ -35,7 +36,35 @@ function createAdmin(){
     })
 }
 
+function login(req, res) {
+    var params = req.body;
+    User.findOne({ username: params.username}, (err, userFound)=>{
+        if (err) return res.status(500).send({err,message: 'Error en la peticion'});
+
+        if(userFound){
+            bcrypt.compare(params.password, userFound.password, (err, passCorrect)=>{
+                if (passCorrect) { 
+                    if (params.getToken === 'true') {
+                        return res.status(200).send({
+                            token: jwt.createToken(userFound)
+                        })
+                    }else{
+                        usuarioEncontrado.password = undefined;
+                        return res.status(200).send({userFound});
+                    }
+                }else{
+                    return res.status(500).send({message: 'El Usuario no se ha podido identificar', err});
+                }
+
+            })
+        }else{
+            return res.status(500).send({message: 'El usuario no se ha podido ingresar'});
+        }
+    })
+}
+
 
 module.exports = {
-    createAdmin
+    createAdmin,
+    login
 }
