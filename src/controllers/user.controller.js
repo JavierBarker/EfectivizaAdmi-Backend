@@ -49,7 +49,7 @@ function login(req, res) {
                             token: jwt.createToken(userFound)
                         })
                     }else{
-                        usuarioEncontrado.password = undefined;
+                        userFound.password = undefined;
                         return res.status(200).send({userFound});
                     }
                 }else{
