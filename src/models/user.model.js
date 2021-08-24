@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 
 var UserSchema = Schema({
 
-    DPI: {type: String, required: true},
+    dpi: {type: String, required: true},
     name: {type: String, required: true},
     lastname: {type: String, required: true},
     username: {type: String, required: true},
