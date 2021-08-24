@@ -163,7 +163,7 @@ function deleteUser(req,res){
 
         User.findByIdAndDelete(idUser,(err,deletedUser)=>{
 
-            if(deletedUser.rol ==="ROL_ADMIN") return res.status(500).send({message: 'No se pueden eliminar otros administradores'});
+            if(deletedUser.rol ==="ROL_ADMIN") return res.status(500).send({message: 'No se pueden eliminar otros administradores'})
             if(err) return res.status(500).send({message: 'Error en la petición'});
             if(!deletedUser) return res.status(500).send({message: 'No se pudo eliminar el usuario'});
 
