@@ -11,5 +11,6 @@ api.post('/login',userController.login);
 api.post('/createUser',md_autentication.ensureAuth,userController.createUser);
 api.put('/editUser',md_autentication.ensureAuth,userController.editUser);
 api.delete('/deleteUser',md_autentication.ensureAuth,userController.deleteUser);
+api.get('/getUsers', md_autentication.ensureAuth, userController.getUsers);
 
 module.exports = api;
