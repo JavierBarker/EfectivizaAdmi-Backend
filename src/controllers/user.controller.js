@@ -129,8 +129,7 @@ function editUser(req,res){
     if(req.user.rol === "ROL_ADMIN"){
 
         User.find({$or:[
-            {username: params.username},
-            {dpi: params.dpi}
+            {username: params.username}
         ]}).exec((err,userFound)=>{
     
             if(userFound && userFound.length>=1){
