@@ -156,7 +156,7 @@ function editUser(req,res){
 
 function deleteUser(req,res){
 
-    var idUser = params.idUser;
+    var idUser = req.params.idUser;
 
     if(req.user.rol === "ROL_ADMIN"){
 
@@ -192,11 +192,29 @@ function getUsers(req, res){
     }
 }
 
+function getUserId(req,res){
+
+    var idUser = req.params.idUser
+
+    if(req.user.rol === "ROL_ADMIN"){
+        User.findById(idUser,(err, foundUser) =>{
+            if(err) return res.status(500).send({message: 'Error en la petición'});
+            if(!foundUser) return res.status(500).send({message: 'No se han podido traer los Usuarios'});
+                    
+            return res.status(200).send({foundUser});
+        })
+    }else{
+        return res.status(500).send({message: 'No posee los permisos para realizar esta acción'});
+    }
+
+}
+
 module.exports = {
     createAdmin,
     login,
     createUser,
     editUser,
     deleteUser,
-    getUsers
+    getUsers,
+    getUserId
 }
