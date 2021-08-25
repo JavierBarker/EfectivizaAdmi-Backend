@@ -128,7 +128,7 @@ function editUser(req,res){
 
     if(req.user.rol === "ROL_ADMIN"){
 
-        /*User.find({$or:[
+        User.find({$or:[
             {username: params.username},
             {dpi: params.dpi}
         ]}).exec((err,userFound)=>{
@@ -146,15 +146,6 @@ function editUser(req,res){
                 })
             }
     
-        })*/
-
-        User.findByIdAndUpdate(idUser,params,{new: true, useFindAndModify: false},(err,editedUser)=>{
-    
-            if(err) return res.status(500).send({message: 'Error en la petición'});
-            if(!editedUser) return res.status(500).send({message: 'No se ha podido editar el usuario'});
-            
-            return res.status(200).send({editedUser});
-
         })
 
     }else{
