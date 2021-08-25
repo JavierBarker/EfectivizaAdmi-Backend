@@ -179,11 +179,24 @@ function deleteUser(req,res){
 
 }
 
+function getUsers(req, res){
+    if(req.user.rol === "ROL_ADMIN"){
+        User.find((err, foundUsers) =>{
+            if(err) return res.status(500).send({message: 'Error en la petición'});
+            if(!foundUsers) return res.status(500).send({message: 'No se han podido traer los Usuarios'});
+                    
+            return res.status(200).send({foundUsers});
+        })
+    }else{
+        return res.status(500).send({message: 'No posee los permisos para realizar esta acción'});
+    }
+}
 
 module.exports = {
     createAdmin,
     login,
     createUser,
     editUser,
-    deleteUser
+    deleteUser,
+    getUsers
 }
