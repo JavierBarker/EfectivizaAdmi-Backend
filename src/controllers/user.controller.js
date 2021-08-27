@@ -76,6 +76,8 @@ function createUser(req,res){
         userModel.name = params.name;
         userModel.lastname = params.lastname;
         userModel.username = params.username;
+        userModel.phone = params.phone;
+        userModel.email = params.email;
         userModel.password = params.password;
         userModel.rol = params.rol;
 
