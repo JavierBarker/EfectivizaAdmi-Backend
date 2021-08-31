@@ -9,5 +9,7 @@ var api = express.Router();
 
 api.post('/createLoan',md_autentication.ensureAuth,loanController.createLoan);
 api.get('/getClientLoans/:idUser',md_autentication.ensureAuth, loanController.getClientLoans);
+api.get('/getUserLoans',md_autentication.ensureAuth, loanController.getUserLoans);
+api.get('/getLoans',md_autentication.ensureAuth, loanController.getLoans);
 
 module.exports = api;

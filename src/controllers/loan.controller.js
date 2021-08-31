@@ -43,7 +43,43 @@ function getClientLoans(req,res){
 
 }
 
+function getUserLoans(req,res) {
+
+    var userId = req.user.sub;
+
+    Loan.find({idUser : userId},(err,foundLoans)=>{
+
+        if(err) return res.status(500).send({err, message: 'Error en la petición'});
+        if(!foundLoans) return res.status(500).send({message: 'Error al guardar el prestamo'});
+        return res.status(200).send({foundLoans});
+
+    })
+    
+}
+
+function getLoans(req,res){
+
+    if(req.user.rol === "ROL_ADMIN"){
+
+        Loan.find((err,foundLoans)=>{
+
+            if(err) return res.status(500).send({err, message: 'Error en la petición'});
+            if(!foundLoans) return res.status(500).send({message: 'Error al guardar el prestamo'});
+            return res.status(200).send({foundLoans});
+
+        })
+
+    }else{
+
+        return res.status(500).send({message: 'No posee los permisos para realizar esta acción'})
+
+    }
+
+}
+
 module.exports = {
     createLoan,
-    getClientLoans
+    getClientLoans,
+    getUserLoans,
+    getLoans
 }
