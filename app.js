@@ -11,6 +11,7 @@ const userController = require('./src/controllers/user.controller');
 
 //IMPORTACION DE RUTAS
 const user_route = require('./src/routes/user.routes');
+const loan_route = require('./src/routes/loan.routes');
 
 //MIDDLEWARES
 app.use(bodyParser.urlencoded({ extended: false}))
@@ -20,6 +21,7 @@ app.use(bodyParser.json())
 app.use(cors());
 
 app.use('/api',user_route);
+app.use('/api',loan_route);
 
 userController.createAdmin();
 //Exportar

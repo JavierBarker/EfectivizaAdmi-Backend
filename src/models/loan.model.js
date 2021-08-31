@@ -11,7 +11,8 @@ var LoanSchema = Schema({
     loanDate: {type: Date, required: true, default: Date.now()},
     payment: {type: Number, default: 0 },
     description: {type: Object},
-    canceled: {type: Boolean, default: false}
+    canceled: {type: Boolean, default: false},
+    typeLoan: {type: String, required: true}
 
 })
 
