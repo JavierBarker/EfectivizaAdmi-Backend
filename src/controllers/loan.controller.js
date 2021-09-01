@@ -77,9 +77,31 @@ function getLoans(req,res){
 
 }
 
+function editLoan(req,res){
+
+    if(req.user.rol ==="ROL_ADMIN"){
+
+        var idLoan = req.params.idLoan;
+        var params = req.body;
+
+        Loan.findByIdAndUpdate(idLoan,params,{new: true, useFindAndModify: false},(err,editedLoan)=>{
+
+            if(err) return res.status(500).send({ message: 'Error en la petición'});
+            if(!editedLoan) return res.status(500).send({ message: 'Error al editar el préstamo'});
+            return res.status(200).send({ editedLoan })
+
+        })
+
+    }else{
+        return res.status(200).send({message: 'No posee los permisos para realizar esta acción'})
+    }
+
+}
+
 module.exports = {
     createLoan,
     getClientLoans,
     getUserLoans,
-    getLoans
+    getLoans,
+    editLoan
 }
