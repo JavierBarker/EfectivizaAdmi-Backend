@@ -9,7 +9,7 @@ function createLoan(req,res) {
         var loanModel = new Loan();
         var params = req.body;
         
-        loanModel.idUser = params.idUser;
+        loanModel.idUser = req.params.idUser;
         loanModel.amount = params.amount;
         loanModel.paymentDate = params.paymentDate;
         loanModel.description = params.description;
