@@ -37,7 +37,7 @@ function getClientLoans(req,res){
 
         if(err) return res.status(500).send({err, message: 'Error en la petición'});
         if(!foundLoans) return res.status(500).send({message: 'Error al guardar el prestamo'});
-        return res.status(200).send({foundLoans});
+        return res.status(200).send(foundLoans);
 
     })
 
