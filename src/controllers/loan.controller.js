@@ -57,6 +57,41 @@ function getUserLoans(req,res) {
     
 }
 
+function getLoan(req,res){
+
+    var loanId = req.params.loanId;
+    var loanGet = {};
+
+    Loan.findById(loanId,(err,foundLoan)=>{
+
+        if(err) return res.status(500).send({err, message: 'Error en la petición'});
+        if(!foundLoan) return res.status(500).send({message: 'Error al encontrar el prestamo'});
+        
+        let restPayment = foundLoan.amount - foundLoan.payment;
+        var countDays=0;
+        var arrears;
+        var date = Date.now();
+        var today = new Date(date)
+
+        if(foundLoan.paymentDate < Date.now()){
+
+
+            for (let i = foundLoan.paymentDate.getDate(); i < today.getDate(); i++) {
+                
+                countDays++;
+
+            }
+
+                arrears = countDays*0.01*foundLoan.amount;
+        
+        }else{
+            arrears = 0;
+        }
+
+    })
+
+}
+
 function getLoans(req,res){
 
     if(req.user.rol === "ROL_ADMIN"){
@@ -103,5 +138,6 @@ module.exports = {
     getClientLoans,
     getUserLoans,
     getLoans,
-    editLoan
+    editLoan,
+    getLoan
 }
