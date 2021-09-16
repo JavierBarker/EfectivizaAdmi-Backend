@@ -60,7 +60,8 @@ function getUserLoans(req,res) {
 function getLoan(req,res){
 
     var loanId = req.params.loanId;
-    var loanGet = {};
+    var loanGet = {
+    };
 
     Loan.findById(loanId,(err,foundLoan)=>{
 
@@ -73,12 +74,12 @@ function getLoan(req,res){
         var date = Date.now();
         var today = new Date(date)
 
-        if(foundLoan.paymentDate < Date.now()){
+        if(foundLoan.paymentDate < today.setDate(today.getDate()-1)){
 
+            while(foundLoan.paymentDate < today){
 
-            for (let i = foundLoan.paymentDate.getDate(); i < today.getDate(); i++) {
-                
                 countDays++;
+                foundLoan.paymentDate.setDate(foundLoan.paymentDate.getDate() + 1)
 
             }
 
@@ -87,6 +88,32 @@ function getLoan(req,res){
         }else{
             arrears = 0;
         }
+
+        var months;
+        var monthInterest
+
+        months = (foundLoan.paymentDate.getFullYear() - foundLoan.loanDate.getFullYear())*12;
+        months += foundLoan.loanDate.getMonth();
+        months -= foundLoan.paymentDate.getMonth();
+
+
+        if(months <0){
+            months = months*-1
+        }else{
+            months = months;
+        }
+
+        monthInterest = months*foundLoan.amount*0.08;
+
+        loanGet = {
+            restPayment: restPayment,
+            arrears: arrears,
+            monthInterest: monthInterest,
+            loan: foundLoan
+        }
+
+        return res.status(200).send({loanGet})
+
 
     })
 
