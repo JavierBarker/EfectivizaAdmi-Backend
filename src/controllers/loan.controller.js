@@ -5,11 +5,11 @@ const Loan = require('../models/loan.model');
 function createLoan(req,res) {
 
     if(req.user.rol ==="ROL_ADMIN"){
-
+        var idUser = req.params.idUser;
         var loanModel = new Loan();
         var params = req.body;
         
-        loanModel.idUser = req.params.idUser;
+        loanModel.idUser = idUser;
         loanModel.amount = params.amount;
         loanModel.paymentDate = params.paymentDate;
         loanModel.description = params.description;
