@@ -210,6 +210,23 @@ function getUserId(req,res){
 
 }
 
+
+function serchClientByUsername(req, res){
+    var username = req.params.user;
+    if(req.user.rol === "ROL_ADMIN"){
+        User.aggregate([
+            {$match: {username:{$regex: username, $options: 'i'}}}
+        ]).exec((err, foundUsers)=>{
+            return res.status(200).send({foundUsers});
+        })
+    }else{
+        return res.status(500).send({message: 'No posee los permisos para realizar esta acción'});
+    }
+}
+
+
+
+
 module.exports = {
     createAdmin,
     login,
@@ -217,5 +234,6 @@ module.exports = {
     editUser,
     deleteUser,
     getUsers,
-    getUserId
+    getUserId,
+    serchClientByUsername
 }

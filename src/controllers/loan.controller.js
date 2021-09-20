@@ -160,11 +160,45 @@ function editLoan(req,res){
 
 }
 
+function getLoanById(req, res){
+    if(req.user.rol ==="ROL_ADMIN"){
+        var idLoan = req.params.loanId;
+        Loan.findById(idLoan,(err,foundLoan)=>{
+            if(err) return res.status(500).send({err, message: 'Error en la petición'});
+            if(!foundLoan) return res.status(500).send({message: 'Error al encontrar el prestamo'});
+            return res.status(200).send({ foundLoan })
+        })
+    }else{
+        return res.status(200).send({message: 'No posee los permisos para realizar esta acción'})
+    }
+}
+
+
+function deleteLoanById(req, res){
+    if(req.user.rol ==="ROL_ADMIN"){
+
+        var idLoan = req.params.loanId;
+
+        Loan.findByIdAndDelete(idLoan,(err,deleteLoan)=>{
+
+            if(err) return res.status(500).send({ message: 'Error en la petición'});
+            if(!deleteLoan) return res.status(500).send({ message: 'Error al Eliminar el préstamo'});
+            return res.status(200).send({ deleteLoan })
+
+        })
+
+    }else{
+        return res.status(200).send({message: 'No posee los permisos para realizar esta acción'})
+    }
+}
+
 module.exports = {
     createLoan,
     getClientLoans,
     getUserLoans,
     getLoans,
     editLoan,
-    getLoan
+    getLoan,
+    getLoanById,
+    deleteLoanById
 }
