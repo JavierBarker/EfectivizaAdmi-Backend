@@ -69,28 +69,10 @@ function getLoan(req,res){
         if(!foundLoan) return res.status(500).send({message: 'Error al encontrar el prestamo'});
         
         let restPayment = foundLoan.amount - foundLoan.payment;
-        var countDays=0;
-        var arrears;
-        var date = Date.now();
-        var today = new Date(date)
-
-        if(foundLoan.paymentDate < today.setDate(today.getDate()-1)){
-
-            while(foundLoan.paymentDate < today){
-
-                countDays++;
-                foundLoan.paymentDate.setDate(foundLoan.paymentDate.getDate() + 1)
-
-            }
-
-                arrears = countDays*0.01*foundLoan.amount;
-        
-        }else{
-            arrears = 0;
-        }
 
         var months;
         var monthInterest
+        var monthInterestPartial
 
         months = (foundLoan.paymentDate.getFullYear() - foundLoan.loanDate.getFullYear())*12;
         months += foundLoan.loanDate.getMonth();
@@ -103,12 +85,13 @@ function getLoan(req,res){
             months = months;
         }
 
+        monthInterestPartial = foundLoan.amount*0.08
         monthInterest = months*foundLoan.amount*0.08;
 
         loanGet = {
             restPayment: restPayment,
-            arrears: arrears,
             monthInterest: monthInterest,
+            monthInterestPartial: monthInterestPartial,
             loan: foundLoan
         }
 
@@ -252,27 +235,6 @@ function deadlineForInstallment(req, res){
             }
             
         }
-
-        for (let i = 0; i < lateLoans.length; i++) {
-            var months;
-            
-
-            months = (lateLoans[i].paymentDate.getFullYear() - lateLoans[i].loanDate.getFullYear())*12;
-            months += lateLoans[i].loanDate.getMonth();
-            months -= lateLoans[i].paymentDate.getMonth();
-
-
-            if(months <0){
-                months = months*-1
-            }else{
-                months = months;
-            }
-
-            lateLoans[i].monthInterest = months*lateLoans[i].amount*0.08;
-
-            
-        }
-        
         
         console.log(lateLoans);
     })

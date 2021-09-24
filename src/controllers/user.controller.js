@@ -224,6 +224,20 @@ function serchClientByUsername(req, res){
     }
 }
 
+function getUser(req,res){
+
+    var userId = req.params.sub;
+    User.findById(userId,(err,userFound)=>{
+
+        if(err) return res.status(500).send({err,message: 'Error en la petición'});
+        if(!userFound) return res.status(500).send({message: 'Error al buscar al usuario'});
+
+        return res.status(500).send({userFound});
+
+    })
+
+}
+
 
 
 
@@ -235,5 +249,6 @@ module.exports = {
     deleteUser,
     getUsers,
     getUserId,
-    serchClientByUsername
+    serchClientByUsername,
+    getUser
 }
