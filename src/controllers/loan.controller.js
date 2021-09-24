@@ -192,6 +192,92 @@ function deleteLoanById(req, res){
     }
 }
 
+function deadlineForInstallment(req, res){
+
+    Loan.find((err, foundLoans)=>{
+        var hoy = new Date(Date.now());
+        hoy.setDate(hoy.getDate() + -1)
+        
+        var lateLoans = [{
+            idUser: "",
+            amount: 0,
+            paymentDate: {type: Date},
+            loanDate: {type: Date},
+            payment: 0,
+            description: {},
+            canceled: {type: Boolean},
+            typeLoan: "",
+            countDays: 0,
+            message: "",
+            penalty: 0,
+            monthInterest: 0
+        }];
+        
+        for (let i = 0; i < foundLoans.length; i++) {
+            if (hoy.getTime() > foundLoans[i].paymentDate.getTime() ) {
+                
+                //if (foundLoans[i].canceled === false) {
+                    lateLoans.push({
+                        idUser: foundLoans[i]._id,
+                        amount: foundLoans[i].amount,
+                        paymentDate: foundLoans[i].paymentDate,
+                        loanDate: foundLoans[i].loanDate,
+                        payment: foundLoans[i].payment,
+                        description: foundLoans[i].description,
+                        canceled: foundLoans[i].canceled,
+                        typeLoan: foundLoans[i].typeLoan,
+                        countDays: 0
+                    });
+               //}
+            }   
+        }
+        
+        var countDays = 0;
+        for (let i = 0; i < lateLoans.length; i++) {
+            var fechaini = new Date(lateLoans[i].paymentDate);
+            var fechafin = new Date(hoy);
+            var diasdif= fechafin.getTime()-fechaini.getTime();
+            var countDays = Math.round(diasdif/(1000*60*60*24));
+            lateLoans[i].countDays = countDays;
+        }
+        
+        for (let i = 0; i < lateLoans.length; i++) {
+            if (lateLoans[i].countDays > 10) {
+                lateLoans[i].message = "La prenda que empeño se Desactivará";
+                lateLoans[i].penalty = 10*0.0175*lateLoans[i].amount;
+
+            }else{
+                lateLoans[i].message = `La prenda se desactivará en ${10-lateLoans[i].countDays} días`;
+                lateLoans[i].penalty = lateLoans[i].countDays*0.0175*lateLoans[i].amount;
+            }
+            
+        }
+
+        for (let i = 0; i < lateLoans.length; i++) {
+            var months;
+            
+
+            months = (lateLoans[i].paymentDate.getFullYear() - lateLoans[i].loanDate.getFullYear())*12;
+            months += lateLoans[i].loanDate.getMonth();
+            months -= lateLoans[i].paymentDate.getMonth();
+
+
+            if(months <0){
+                months = months*-1
+            }else{
+                months = months;
+            }
+
+            lateLoans[i].monthInterest = months*lateLoans[i].amount*0.08;
+
+            
+        }
+        
+        
+        console.log(lateLoans);
+    })
+}
+
 module.exports = {
     createLoan,
     getClientLoans,
@@ -200,5 +286,6 @@ module.exports = {
     editLoan,
     getLoan,
     getLoanById,
-    deleteLoanById
+    deleteLoanById,
+    deadlineForInstallment
 }
