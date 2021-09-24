@@ -199,7 +199,7 @@ function deadlineForInstallment(req, res){
         for (let i = 0; i < foundLoans.length; i++) {
             if (hoy.getTime() > foundLoans[i].paymentDate.getTime() ) {
                 
-                //if (foundLoans[i].canceled === false) {
+                if (foundLoans[i].canceled === false) {
                     lateLoans.push({
                         idUser: foundLoans[i]._id,
                         amount: foundLoans[i].amount,
@@ -211,7 +211,7 @@ function deadlineForInstallment(req, res){
                         typeLoan: foundLoans[i].typeLoan,
                         countDays: 0
                     });
-               //}
+                }
             }   
         }
         
@@ -236,7 +236,7 @@ function deadlineForInstallment(req, res){
             
         }
         
-        console.log(lateLoans);
+        return res.status(200).send({ lateLoans })
     })
 }
 
