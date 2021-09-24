@@ -16,4 +16,5 @@ api.get('/getLoan/:loanId',/*md_autentication.ensureAuth,*/loanController.getLoa
 api.get('/getLoanById/:loanId',md_autentication.ensureAuth,loanController.getLoanById);
 api.delete('/deleteLoanById/:loanId', md_autentication.ensureAuth, loanController.deleteLoanById);
 
+api.get('/deadlineForInstallment', md_autentication.ensureAuth, loanController.deadlineForInstallment)
 module.exports = api;
