@@ -95,7 +95,7 @@ function getLoan(req,res){
             loan: foundLoan
         }
 
-        return res.status(200).send({loanGet})
+        return res.status(200).send(loanGet)
 
 
     })
@@ -106,11 +106,11 @@ function getLoans(req,res){
 
     if(req.user.rol === "ROL_ADMIN"){
 
-        Loan.find((err,foundLoans)=>{
+        Loan.find().populate('idUser name lastname username dpi').exec((err,foundLoans)=>{
 
             if(err) return res.status(500).send({err, message: 'Error en la petición'});
             if(!foundLoans) return res.status(500).send({message: 'Error al guardar el prestamo'});
-            return res.status(200).send({foundLoans});
+            return res.status(200).send(foundLoans);
 
         })
 
@@ -177,13 +177,15 @@ function deleteLoanById(req, res){
 
 function deadlineForInstallment(req, res){
 
-    Loan.find((err, foundLoans)=>{
+    Loan.find().populate('idUser name lastname username dpi').exec((err, foundLoans)=>{
         var hoy = new Date(Date.now());
         hoy.setDate(hoy.getDate() + -1)
         
         var lateLoans = [{
+            idLoan:"",
             idUser: "",
             amount: 0,
+            username:'',
             paymentDate: {type: Date},
             loanDate: {type: Date},
             payment: 0,
@@ -201,7 +203,9 @@ function deadlineForInstallment(req, res){
                 
                 if (foundLoans[i].canceled === false) {
                     lateLoans.push({
-                        idUser: foundLoans[i]._id,
+                        idLoan: foundLoans[i]._id,
+                        idUser: foundLoans[i].idUser,
+                        username: foundLoans[i].idUser.username,
                         amount: foundLoans[i].amount,
                         paymentDate: foundLoans[i].paymentDate,
                         loanDate: foundLoans[i].loanDate,
@@ -226,7 +230,7 @@ function deadlineForInstallment(req, res){
         
         for (let i = 0; i < lateLoans.length; i++) {
             if (lateLoans[i].countDays > 10) {
-                lateLoans[i].message = "La prenda que empeño se Desactivará";
+                lateLoans[i].message = "La prenda que empeño está desactivada";
                 lateLoans[i].penalty = 10*0.0175*lateLoans[i].amount;
 
             }else{
@@ -236,8 +240,83 @@ function deadlineForInstallment(req, res){
             
         }
         
-        return res.status(200).send({ lateLoans })
+        lateLoans.shift()
+        return res.status(200).send( lateLoans )
     })
+}
+
+function deadlineForInstallmentUser(req, res){
+
+    var idUser = req.params.idUser
+
+    Loan.find({idUser: idUser},(err, foundLoans)=>{
+        var hoy = new Date(Date.now());
+        console.log(foundLoans)
+        hoy.setDate(hoy.getDate() + -1)
+        
+        var lateLoans = [{
+            idLoan:"",
+            idUser: "",
+            amount: 0,
+            username:'',
+            paymentDate: {type: Date},
+            loanDate: {type: Date},
+            payment: 0,
+            description: {},
+            canceled: {type: Boolean},
+            typeLoan: "",
+            countDays: 0,
+            message: "",
+            penalty: 0,
+            monthInterest: 0
+        }];
+        
+        for (let i = 0; i < foundLoans.length; i++) {
+            if (hoy.getTime() > foundLoans[i].paymentDate.getTime() ) {
+                
+                if (foundLoans[i].canceled === false) {
+                    lateLoans.push({
+                        idLoan: foundLoans[i]._id,
+                        idUser: foundLoans[i].idUser,
+                        username: foundLoans[i].idUser.username,
+                        amount: foundLoans[i].amount,
+                        paymentDate: foundLoans[i].paymentDate,
+                        loanDate: foundLoans[i].loanDate,
+                        payment: foundLoans[i].payment,
+                        description: foundLoans[i].description,
+                        canceled: foundLoans[i].canceled,
+                        typeLoan: foundLoans[i].typeLoan,
+                        countDays: 0
+                    });
+                }
+            }   
+        }
+        
+        var countDays = 0;
+        for (let i = 0; i < lateLoans.length; i++) {
+            var fechaini = new Date(lateLoans[i].paymentDate);
+            var fechafin = new Date(hoy);
+            var diasdif= fechafin.getTime()-fechaini.getTime();
+            var countDays = Math.round(diasdif/(1000*60*60*24));
+            lateLoans[i].countDays = countDays;
+        }
+        
+        for (let i = 0; i < lateLoans.length; i++) {
+            if (lateLoans[i].countDays > 10) {
+                lateLoans[i].message = "La prenda que empeño está desactivada";
+                lateLoans[i].penalty = 10*0.0175*lateLoans[i].amount;
+
+            }else{
+                lateLoans[i].message = `La prenda se desactivará en ${10-lateLoans[i].countDays} días`;
+                lateLoans[i].penalty = lateLoans[i].countDays*0.0175*lateLoans[i].amount;
+            }
+            
+        }
+        
+        lateLoans.shift()
+        return res.status(200).send( lateLoans )
+    })
+
 }
 
 module.exports = {
@@ -249,5 +328,6 @@ module.exports = {
     getLoan,
     getLoanById,
     deleteLoanById,
-    deadlineForInstallment
+    deadlineForInstallment,
+    deadlineForInstallmentUser
 }
