@@ -190,7 +190,7 @@ function deadlineForInstallment(req, res){
             loanDate: {type: Date},
             payment: 0,
             description: {},
-            canceled: {type: Boolean},
+            canceled: "",
             typeLoan: "",
             countDays: 0,
             message: "",
@@ -201,7 +201,7 @@ function deadlineForInstallment(req, res){
         for (let i = 0; i < foundLoans.length; i++) {
             if (hoy.getTime() > foundLoans[i].paymentDate.getTime() ) {
                 
-                if (foundLoans[i].canceled === false) {
+                if (foundLoans[i].canceled == "Sin cancelar") {
                     lateLoans.push({
                         idLoan: foundLoans[i]._id,
                         idUser: foundLoans[i].idUser,
@@ -251,7 +251,6 @@ function deadlineForInstallmentUser(req, res){
 
     Loan.find({idUser: idUser},(err, foundLoans)=>{
         var hoy = new Date(Date.now());
-        console.log(foundLoans)
         hoy.setDate(hoy.getDate() + -1)
         
         var lateLoans = [{
@@ -263,7 +262,7 @@ function deadlineForInstallmentUser(req, res){
             loanDate: {type: Date},
             payment: 0,
             description: {},
-            canceled: {type: Boolean},
+            canceled: "",
             typeLoan: "",
             countDays: 0,
             message: "",
@@ -274,7 +273,7 @@ function deadlineForInstallmentUser(req, res){
         for (let i = 0; i < foundLoans.length; i++) {
             if (hoy.getTime() > foundLoans[i].paymentDate.getTime() ) {
                 
-                if (foundLoans[i].canceled === false) {
+                if (foundLoans[i].canceled == 'Sin cancelar') {
                     lateLoans.push({
                         idLoan: foundLoans[i]._id,
                         idUser: foundLoans[i].idUser,
