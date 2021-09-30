@@ -5,11 +5,14 @@ var Schema = mongoose.Schema;
 
 var UserSchema = Schema({
 
-    name: String,
-    lastname: String,
-    username: String,
-    password: String,
-    rol: String
+    dpi: {type: String, required: true},
+    name: {type: String, required: true},
+    lastname: {type: String, required: true},
+    username: {type: String, required: true},
+    phone: {type: Number, required: true},
+    email: {type: String, required: false},
+    password: {type: String, required: true},
+    rol: {type: String, required: true}
 
 })
 
